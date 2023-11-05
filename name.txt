@@ -1,0 +1,24 @@
+        
+ stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: ' --scan ./ ', odcInstallation: 'DC'
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        stage('Sonarqube Analysis') {
+            steps {
+                
+                withSonarQubeEnv('sonar'){
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Python-Webapp \
+                    -Dsonar.projectKey=Python-Webapp \ ''' 
+                }
+                
+            
+            }
+        }
+
+         stage('Trivy Scan Docker Image')
+            steps{
+                sh "trivy fs ."
+        }        

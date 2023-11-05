@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'jdk17'
+    }
+
+    stages {
+        stage('Git Checkout ') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Amul-Thantharate/Python-Webapp.git'
+            }
+        }
+        stage('Docker build & Tag') {
+            steps{
+                script {
+                    withDockerRegistry(credentialsId: 'docke-cred', toolName: 'docker') {
+                        sh "make image"
+                    }
+                }
+            }
+        }
+        
+        stage('Docker Push ') {
+            steps{
+                script {
+                    withDockerRegistry(credentialsId: 'docke-cred', toolName: 'docker') {
+                        sh "make push"
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to Docker Container') {
+            steps{
+                script {
+                    withDockerRegistry(credentialsId: 'docke-cred', toolName: 'docker') {
+                        sh "docker run -d -p 5000:5000 amuldark/python-webapp:latest"
+                    }
+                }
+            }
+        }
+    }
+}

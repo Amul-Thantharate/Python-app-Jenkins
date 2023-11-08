@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Git Checkout ') {
             steps {
-                git branch: 'master', url: 'https://github.com/Amul-Thantharate/Python-Webapp.git'
+                git branch: 'main', url: 'https://github.com/Amul-Thantharate/Python-app-Jenkins.git'
             }
         }
         stage('Docker build & Tag') {
